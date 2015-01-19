@@ -6,8 +6,8 @@ if [ -z "$1" ];
 	exit 1;
 fi
 
-original_switch=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-clone_switch=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+#original_switch=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_switch=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 
 #migration of vms must have finished
 #TODO: start migration at this point?
@@ -31,11 +31,14 @@ echo "clone switch dpid: $clone_switch"
 
 #python ovxctl.py -n stopNetwork 1
 
-python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port
-python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port
+#python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port
+#python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port
 
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:39:c8:b4
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 52:54:00:11:bb:bd
+python ovxctl.py -n disconnectHost 1 1
+python ovxctl.py -n disconnectHost 1 2
+
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:aa:52:b8
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 52:54:00:49:a5:72
 
 #python ovxctl.py -n startNetwork 1
 

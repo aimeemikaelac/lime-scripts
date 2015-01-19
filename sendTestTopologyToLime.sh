@@ -1,7 +1,7 @@
 #!/bin/bash
 
 original_ovx_switch="00:a4:23:05:00:00:00:01"
-clone_ovx_switch="00:a4:23:05:00:00:00:01"
+clone_ovx_switch="00:a4:23:05:00:00:00:02"
 
 original_format_string="{\n\"%s\":\n{\"ports\":\n{\"1\":\"GHOST\",\n\"2\":\"H_CONNECTED\",\n\"3\":\"H_CONNECTED\"\n}\n}\n}"
 
