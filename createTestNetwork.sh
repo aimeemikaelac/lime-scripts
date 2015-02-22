@@ -41,6 +41,9 @@ gre_r720_2=$(ssh $1 sudo ovs-vsctl get Interface $gre_2_interface ofport)
 gre_r720_3=$(ssh $2 sudo ovs-vsctl get Interface $gre_3_interface ofport)
 #dpid=$(sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 
+#dummy1=$(ssh $1 sudo ovs-vsctl get Interface dummy.tap ofport)
+#dummy2=$(ssh $2 sudo ovs-vsctl get Interface dummy.tap ofport)
+
 original_switch=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 clone_switch=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 
@@ -57,8 +60,10 @@ echo "gre tunnel of r720-2 to r720-3 OF port on r720-2: $gre_r720_2"
 echo "gre tunnel of r720-3 to r720-2 OF port on r720-3: $gre_r720_3"
 echo "original switch dpid: $original_switch"
 echo "clone switch dpid: $clone_switch"
+#echo "Dummy port 1: $dummy1"
+#echo "Dummy port 2: $dummy2"
 
-
+#6633
 python ovxctl.py -n createNetwork tcp:192.168.1.1:6633 192.168.3.1 24  #LIME address
 
 #create first physical to ovx switch mapping. returns 00:a4:23:05:00:00:00:01 as ovx switch dpid
@@ -86,16 +91,26 @@ python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
 #as the mac address may not be that of the host, but of the patch port sending
 #the packet. can replace the host macs with the patch port mac, which
 #can be done via script here
-#python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port_clone
-#python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port_clone
+echo "ubuntu-int1 original:"
+python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port_clone
+echo "ubuntu-int2 original:"
+python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port_clone
+#python ovxctl.py -n createPort 1 $clone_switch $dummy2
+#TEST: create another  port on a physical port
+#python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
 
 #add ports on ovs to virtual switches - might need to change based on what ports are used?
 #creates r720-2 gre tunnel port on port 1 of vswitch :01
+echo "ubuntu-int1 clone:"
 python ovxctl.py -n createPort 1 $original_switch $gre_r720_2
 #creates ubuntu-int1 port on port 2 of vswitch :01
+echo "ubuntu-int2 clone:"
 python ovxctl.py -n createPort 1 $original_switch $ubuntu_int1_port
 #creates ubuntu-int2 port on port 3 of vswitch :01
 python ovxctl.py -n createPort 1 $original_switch $ubuntu_int2_port
+#python ovxctl.py -n createPort 1 $original_switch $dummy1
+#ANOTHER TEST:
+#python ovxctl.py -n createPort 1 $original_switch $gre_r720_2
 
 #python ovxctl.py -n createPort 1 00:00:00:00:00:00:01:00 3 # this should create port 3 for vswitch 00:a4:23:05:00:00:00:03
 #python ovxctl.py -n createPort 1 00:00:00:00:00:00:03:00 2 # this should create port 1 for vswitch 00:a4:23:05:00:00:00:03
@@ -104,13 +119,23 @@ python ovxctl.py -n createPort 1 $original_switch $ubuntu_int2_port
 
 
 python ovxctl.py -n connectLink 1 00:a4:23:05:00:00:00:01 1 00:a4:23:05:00:00:00:02 1 spf 1
+#TEST create duplicate link
+#python ovxctl.py -n connectLink 1 00:a4:23:05:00:00:00:01 4 00:a4:23:05:00:00:00:02 4 spf 1
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 1 ce:5a:b9:7c:87:b9 #connect something to gre tunnel for now
 
-
+echo "ubuntu-int1 original host#:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 2 52:54:00:aa:52:b8  #connect ubuntu-int1 to this switch
+echo "ubuntu-int2 original host#:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 3 52:54:00:49:a5:72  # connecting ubuntu-int2 to this vswitch
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 4 ce:5a:b9:7c:87:b6 #connect something to dummy port
+
 #connect dummy tap devices to these ports so that rules can be written to them. does not seem that the device needs exist?
-#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:75:5c:dd
-#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 ce:5a:b9:7c:87:b5
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 1 ce:5a:b9:7c:87:ba #connect something to gre for now
+echo "ubuntu-int1 host placeholder #:"
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:75:5c:dd
+echo "ubuntu-int2 host placeholder #:"
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 ce:5a:b9:7c:87:b5
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 4 ce:5a:b9:7c:87:b7 #connect something to dummy port
 
 
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 1 52:54:00:c4:90:dd  #connect ubuntu-int1 to this switch
