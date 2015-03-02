@@ -5,16 +5,19 @@ sleep 2
 echo "Creating OVX network"
 source createTestNetwork.sh 128.138.189.249 128.138.189.140
 echo ""
-sleep 5
+sleep 10
 echo "Writing openflow rules"
 for i in `seq 1 5`;
 do
-	for j in $(seq $(i) 5);
+	for j in $(seq $i 5);
 	do
-		source createRules.sh $i $j
+		if [ "$i" -ne "$j" ];
+		then
+			source createRules.sh $i $j "00:a4:23:05:00:00:00:01"
+		fi
 	done
 done
-source createRules.sh
+#source createRules.sh
 echo -ne '.\r'
 sleep 2
 echo -ne '...\r'
