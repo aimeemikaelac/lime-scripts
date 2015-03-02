@@ -7,7 +7,8 @@ source createTestNetwork.sh 128.138.189.249 128.138.189.140
 echo ""
 sleep 10
 echo "Writing openflow rules"
-for i in `seq 1 5`;
+#skip port 1, as this is the ghost port
+for i in `seq 2 5`;
 do
 	for j in $(seq $i 5);
 	do
@@ -36,12 +37,14 @@ echo ""
 echo "Finished initialization"
 for i in `seq 1 5`;
 do
-	echo "Migrating ubuntu$(i)"
-	source "migrateUbuntu$(i).sh"
+	echo "Migrating ubuntu$i"
+	source "migrateUbuntu$i.sh"
 	echo ""
-	source "ubuntu$(i)Finished.sh"
+	finishedScriptPrefix="ubuntu$i"
+	finishedScriptEnd="Finished.sh"
+	source "$finishedScriptPrefix$finishedScriptEnd"
 	echo ""
-	echo "Finished migrating ubuntu$(i)"
+	echo "Finished migrating ubuntu$i"
 done
 #echo "Migrating ubuntu2"
 #source migrateUbuntu2.sh
