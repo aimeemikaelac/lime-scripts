@@ -3,9 +3,9 @@
 original_ovx_switch="00:a4:23:05:00:00:00:01"
 clone_ovx_switch="00:a4:23:05:00:00:00:02"
 
-original_format_string="{\n\"%s\":\n{\"ports\":\n{\"1\":\"GHOST\",\n\"2\":\"H_CONNECTED\",\n\"3\":\"H_CONNECTED\"\n}\n}\n}"
+original_format_string="{\n\"%s\":\n{\"ports\":\n{\"1\":\"GHOST\",\n\"2\":\"H_CONNECTED\",\n\"3\":\"H_CONNECTED\"\n,\n\"4\":\"H_CONNECTED\",\n\"5\":\"H_CONNECTED\",\n\"6\":\"H_CONNECTED\"\n}\n}\n}"
 
-clone_format_string="{\n\"%s\":\n{\"ports\":\n{\"1\":\"GHOST\",\n\"2\":\"EMPTY\",\n\"3\":\"EMPTY\"\n},\n\"original\":\"$original_ovx_switch\"}\n}"
+clone_format_string="{\n\"%s\":\n{\"ports\":\n{\"1\":\"GHOST\",\n\"2\":\"EMPTY\",\n\"3\":\"EMPTY\",\n\"4\":\"EMPTY\",\n\"5\":\"EMPTY\",\n\"6\":\"EMPTY\"\n},\n\"original\":\"$original_ovx_switch\"}\n}"
 
 original_data=$(printf "$original_format_string" "$original_ovx_switch")
 

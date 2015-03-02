@@ -30,6 +30,26 @@ ubuntu_int1_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int1_interf
 
 ubuntu_int2_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int2_interface ofport)
 
+
+
+ubuntu_int3_interface="ubuntu3.tap"
+ubuntu_int3_port=$(ssh $1 sudo ovs-vsctl get Interface $ubuntu_int3_interface ofport)
+
+#ubuntu_int2_interface=$(ssh $1 virsh dumpxml ubuntu-int2 | grep -oP "vnet\d+")
+ubuntu_int4_interface="ubuntu4.tap"
+ubuntu_int4_port=$(ssh $1 sudo ovs-vsctl get Interface $ubuntu_int4_interface ofport)
+
+ubuntu_int5_interface="ubuntu5.tap"
+ubuntu_int5_port=$(ssh $1 sudo ovs-vsctl get Interface $ubuntu_int5_interface ofport)
+
+
+ubuntu_int3_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int3_interface ofport)
+
+ubuntu_int4_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int4_interface ofport)
+
+ubuntu_int5_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int5_interface ofport)
+
+
 gre_2_interface="r720_2_to_3.gre"
 #gre_2_interface="br1_to_gre_patch"
 gre_3_interface="r720_3_to_2.gre"
@@ -54,8 +74,14 @@ clone_switch=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid
 echo "ubuntu-int1 OVS OF port: $ubuntu_int1_port"
 #echo "ubuntu-int2 KVM network interface: $ubuntu_int2_interface"
 echo "ubuntu-int2 KVM OF port: $ubuntu_int2_port"
+echo "ubuntu-int3 KVM OF port: $ubuntu_int3_port"
+echo "ubuntu-int4 KVM OF port: $ubuntu_int4_port"
+echo "ubuntu-int5 KVM OF port: $ubuntu_int5_port"
 echo "ubuntu-int1 clone OVS OF port: $ubuntu_int1_port_clone"
 echo "ubuntu-int2 clone OVS OF port: $ubuntu_int2_port_clone"
+echo "ubuntu-int3 clone OVS OF port: $ubuntu_int3_port_clone"
+echo "ubuntu-int4 clone OVS OF port: $ubuntu_int4_port_clone"
+echo "ubuntu-int5 clone OVS OF port: $ubuntu_int5_port_clone"
 echo "gre tunnel of r720-2 to r720-3 OF port on r720-2: $gre_r720_2"
 echo "gre tunnel of r720-3 to r720-2 OF port on r720-3: $gre_r720_3"
 echo "original switch dpid: $original_switch"
@@ -95,6 +121,9 @@ echo "ubuntu-int1 original:"
 python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port_clone
 echo "ubuntu-int2 original:"
 python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port_clone
+python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int3_port_clone
+python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int4_port_clone
+python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int5_port_clone
 #python ovxctl.py -n createPort 1 $clone_switch $dummy2
 #TEST: create another  port on a physical port
 #python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
@@ -108,6 +137,9 @@ echo "ubuntu-int2 clone:"
 python ovxctl.py -n createPort 1 $original_switch $ubuntu_int1_port
 #creates ubuntu-int2 port on port 3 of vswitch :01
 python ovxctl.py -n createPort 1 $original_switch $ubuntu_int2_port
+python ovxctl.py -n createPort 1 $original_switch $ubuntu_int3_port
+python ovxctl.py -n createPort 1 $original_switch $ubuntu_int4_port
+python ovxctl.py -n createPort 1 $original_switch $ubuntu_int5_port
 #python ovxctl.py -n createPort 1 $original_switch $dummy1
 #ANOTHER TEST:
 #python ovxctl.py -n createPort 1 $original_switch $gre_r720_2
@@ -127,6 +159,9 @@ echo "ubuntu-int1 original host#:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 2 52:54:00:aa:52:b8  #connect ubuntu-int1 to this switch
 echo "ubuntu-int2 original host#:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 3 52:54:00:49:a5:72  # connecting ubuntu-int2 to this vswitch
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 4 52:54:00:f5:e0:11  # connecting ubuntu-int3 to this vswitch
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 5 52:54:00:43:cb:e3  # connecting ubuntu-int4 to this vswitch
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 6 52:54:00:59:80:71  # connecting ubuntu-int5 to this vswitch
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 4 ce:5a:b9:7c:87:b6 #connect something to dummy port
 
 #connect dummy tap devices to these ports so that rules can be written to them. does not seem that the device needs exist?
@@ -135,6 +170,12 @@ echo "ubuntu-int1 host placeholder #:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:75:5c:dd
 echo "ubuntu-int2 host placeholder #:"
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 ce:5a:b9:7c:87:b5
+echo "ubuntu-int3 host placeholder #:"
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 4 ce:5a:b9:7c:87:b6
+echo "ubuntu-int4 host placeholder #:"
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 5 ce:5a:b9:7c:87:b7
+echo "ubuntu-int5 host placeholder #:"
+python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 6 ce:5a:b9:7c:87:b8
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 4 ce:5a:b9:7c:87:b7 #connect something to dummy port
 
 
