@@ -10,13 +10,16 @@ echo "Writing openflow rules"
 #skip port 1, as this is the ghost port
 for i in `seq 2 5`;
 do
+	actionString=""
 	for j in $(seq $i 5);
 	do
 		if [ "$i" -ne "$j" ];
 		then
-			source createRules.sh $i $j "00:a4:23:05:00:00:00:01"
+			currentActionString="output=$j,"
+			actionString="$actionString$currentActionString"
 		fi
 	done
+	source createArbitraryActionForwardRule.sh $i $actionString "00:a4:23:05:00:00:00:01"
 done
 #source createRules.sh
 echo -ne '.\r'
