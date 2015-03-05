@@ -8,10 +8,10 @@ echo ""
 sleep 10
 echo "Writing openflow rules"
 #skip port 1, as this is the ghost port
-for i in `seq 2 5`;
+for i in `seq 2 6`;
 do
 	actionString=""
-	for j in $(seq $i 5);
+	for j in $(seq 2 6);
 	do
 		if [ "$i" -ne "$j" ];
 		then
