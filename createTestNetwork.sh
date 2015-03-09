@@ -156,30 +156,38 @@ python ovxctl.py -n connectLink 1 00:a4:23:05:00:00:00:01 1 00:a4:23:05:00:00:00
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 1 ce:5a:b9:7c:87:b9 #connect something to gre tunnel for now
 
 echo "ubuntu-int1 original host#:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 2 52:54:00:aa:52:b8  #connect ubuntu-int1 to this switch
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 2 52:54:00:aa:52:b8  #connect ubuntu-int1 to this switch
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 2
 echo "ubuntu-int2 original host#:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 3 52:54:00:49:a5:72  # connecting ubuntu-int2 to this vswitch
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 4 52:54:00:f5:e0:11  # connecting ubuntu-int3 to this vswitch
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 5 52:54:00:43:cb:e3  # connecting ubuntu-int4 to this vswitch
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 6 52:54:00:59:80:71  # connecting ubuntu-int5 to this vswitch
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 3 52:54:00:49:a5:72  # connecting ubuntu-int2 to this vswitch
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 3
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 4 52:54:00:f5:e0:11  # connecting ubuntu-int3 to this vswitch
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 4
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 5 52:54:00:43:cb:e3  # connecting ubuntu-int4 to this vswitch
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 5
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 6 52:54:00:59:80:71  # connecting ubuntu-int5 to this vswitch
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 6
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:01 7 ce:5a:b9:7c:87:b4 #connect something to dummy port
 
 #connect dummy tap devices to these ports so that rules can be written to them. does not seem that the device needs exist?
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 1 ce:5a:b9:7c:87:ba #connect something to gre for now
 echo "ubuntu-int1 host placeholder #:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:75:5c:dd
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:75:5c:dd
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 2
 echo "ubuntu-int2 host placeholder #:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 ce:5a:b9:7c:87:b5
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 3 ce:5a:b9:7c:87:b5
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 3
 echo "ubuntu-int3 host placeholder #:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 4 ce:5a:b9:7c:87:b6
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 4 ce:5a:b9:7c:87:b6
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 4
 echo "ubuntu-int4 host placeholder #:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 5 ce:5a:b9:7c:87:b7
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 5 ce:5a:b9:7c:87:b7
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 5
 echo "ubuntu-int5 host placeholder #:"
-python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 6 ce:5a:b9:7c:87:b8
+#python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 6 ce:5a:b9:7c:87:b8
+python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 6
 python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 7 ff:ff:ff:ff:ff:ff #connect something to dummy port
-
-python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:01 7
-python ovxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 7
+#python ovsxctl.py -n startPort 1 00:a4:23:05:00:00:00:02 7
 
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 1 52:54:00:c4:90:dd  #connect ubuntu-int1 to this switch
 #python ovxctl.py -n connectHost 1 00:a4:23:05:00:00:00:02 2 52:54:00:83:4d:44  # connecting ubuntu-int2 to this vswitch

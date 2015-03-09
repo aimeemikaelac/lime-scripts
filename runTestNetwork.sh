@@ -45,7 +45,7 @@ do
 	echo ""
 	finishedScriptPrefix="ubuntu$i"
 	finishedScriptEnd="Finished.sh"
-	source "$finishedScriptPrefix$finishedScriptEnd"
+#	source "$finishedScriptPrefix$finishedScriptEnd"
 	echo ""
 	echo "Finished migrating ubuntu$i"
 done
