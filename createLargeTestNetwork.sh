@@ -90,8 +90,12 @@ dummy2=$(ssh $2 sudo ovs-vsctl get Interface dummy.tap ofport)
 dummy1_3=$(ssh $1 sudo ovs-vsctl get Interface dummy2.tap ofport)
 dummy2_3=$(ssh $1 sudo ovs-vsctl get Interface dummy2.tap ofport)
 
-original_switch=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-clone_switch=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+original_br1=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+original_br2=$(ssh $1 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+original_br2=$(ssh $1 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br1=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br2=$(ssh $2 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br3=$(ssh $2 sudo ovs-ofctl show br3 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 
 #TODO: get OVS DPIDs in this manner as well
 #TODO: set OVS controllers on hosts to here
@@ -108,12 +112,22 @@ echo "ubuntu-int2 clone OVS OF port: $ubuntu_int2_port_clone"
 echo "ubuntu-int3 clone OVS OF port: $ubuntu_int3_port_clone"
 echo "ubuntu-int4 clone OVS OF port: $ubuntu_int4_port_clone"
 echo "ubuntu-int5 clone OVS OF port: $ubuntu_int5_port_clone"
-echo "gre tunnel of r720-2 to r720-3 OF port on r720-2: $gre_r720_2"
-echo "gre tunnel of r720-3 to r720-2 OF port on r720-3: $gre_r720_3"
-echo "original switch dpid: $original_switch"
-echo "clone switch dpid: $clone_switch"
-echo "Dummy port 1: $dummy1"
-echo "Dummy port 2: $dummy2"
+echo "br1 gre tunnel of r720-2 to r720-3 OF port on r720-2: $gre_r720_2"
+echo "br2 gre tunnel of r720-2 to r720-3 OF port on r720-2: $br2_gre_r720_2"
+echo "br3 gre tunnel of r720-2 to r720-3 OF port on r720-2: $br2_gre_r720_3"
+echo "br1 gre tunnel of r720-3 to r720-2 OF port on r720-3: $gre_r720_3"
+echo "br2 gre tunnel of r720-3 to r720-2 OF port on r720-3: $br2_gre_r720_3"
+echo "br3 gre tunnel of r720-3 to r720-2 OF port on r720-3: $br3_gre_r720_3"
+echo "original br1 dpid: $original_br1"
+echo "original br2 dpid: $original_br2"
+echo "original br3 dpid: $original_br3"
+echo "clone br1 dpid: $clone_br1"
+echo "clone br2 dpid: $clone_br2"
+echo "clone br3 dpid: $clone_br3"
+echo "original br1 dummy port: $dummy1"
+echo "original br3 dummy port: $dummy1_3"
+echo "clone br1 dummy port: $dummy2"
+echo "clone br3 dummy port: $dummy2_3"
 
 #6633
 python ovxctl.py -n createNetwork tcp:192.168.1.1:6633 192.168.3.1 24  #LIME address
@@ -121,18 +135,32 @@ python ovxctl.py -n createNetwork tcp:192.168.1.1:6633 192.168.3.1 24  #LIME add
 #create first physical to ovx switch mapping. returns 00:a4:23:05:00:00:00:01 as ovx switch dpid
 #python ovxctl.py -n createSwitch 1 00:00:00:00:00:00:01:00
 #create using DPID of ubuntu-ngn-r720-2 ovs dpid
-python ovxctl.py -n createSwitch 1 $original_switch
+#00:a4:23:05:00:00:00:01
+python ovxctl.py -n createSwitch 1 $original_br1
+#00:a4:23:05:00:00:00:02
+python ovxctl.py -n createSwitch 1 $original_br2
+#00:a4:23:05:00:00:00:03
+python ovxctl.py -n createSwitch 1 $original_br3
 
 #create second physical to ovs switch mapping. returns 00:a4:23:05:00:00:00:02 as vx switch dpid
 #python ovxctl.py -n createSwitch 1 00:00:00:00:00:00:02:00
 #create using DPID of ubuntu-ngn-r720-3 ovs dpid
-python ovxctl.py -n createSwitch 1 $clone_switch
+#00:a4:23:05:00:00:00:04
+python ovxctl.py -n createSwitch 1 $clone_br1
+#00:a4:23:05:00:00:00:05
+python ovxctl.py -n createSwitch 1 $clone_br2
+#00:a4:23:05:00:00:00:06
+python ovxctl.py -n createSwitch 1 $clone_br3
 
 #python ovxctl.py -n createSwitch 1 00:00:00:00:00:00:03:00
 
 
 #creates r720-3 gre tunnel port on port 1 of vswitch :02
-python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
+python ovxctl.py -n createPort 1 $clone_br1 $gre_r720_3
+
+python ovxctl.py -n createPort 1 $clone_br2 $br2_gre_r720_3
+
+python ovxctl.py -n createPort 1 $clone_br2 $br3_gre_r720_3
 #NOTE: needed so that the flow mods to receive the vlan tags can
 #be written before the hosts are migrated. will still need to 
 #disconnect and reconnect each host individually in ovx. may
@@ -143,9 +171,9 @@ python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
 #as the mac address may not be that of the host, but of the patch port sending
 #the packet. can replace the host macs with the patch port mac, which
 #can be done via script here
-echo "ubuntu-int1 original:"
-python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int1_port_clone
-echo "ubuntu-int2 original:"
+
+python ovxctl.py -n createPort 1 $clone_br1 $ubuntu_int1_port_clone
+
 python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int2_port_clone
 python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int3_port_clone
 python ovxctl.py -n createPort 1 $clone_switch $ubuntu_int4_port_clone
