@@ -54,55 +54,56 @@ ubuntu_int4_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int4_interf
 #ovs port number of ubuntu5 clone
 ubuntu_int5_port_clone=$(ssh $2 sudo ovs-vsctl get Interface $ubuntu_int5_interface ofport)
 
-#ghost port between br1 and c_br1
-br1_to_c_br1=$(ssh $ovs_br1 sudo ovs-vsctl get Interface br1_to_c_br1 ofport)
-c_br1_to_br1=$(ssh $ovs_c_br1 sudo ovs-vsctl get Interface c_br1_to_br1 ofport)
 
-#ghost port between br2 and c_br2
-br2_to_c_br2=$(ssh $ovs_br2 sudo ovs-vsctl get Interface br2_to_c_br2 ofport)
-c_br2_to_br2=$(ssh $ovs_c_br2 sudo ovs-vsctl get Interface c_br2_to_br2 ofport)
+gre_2_interface="r720_2_to_3.gre"
 
-#ghost port between br3 and c_br3
-br3_to_c_br3=$(ssh $ovs_br3 sudo ovs-vsctl get Interface br3_to_c_br3 ofport)
-c_br3_to_br3=$(ssh $ovs_c_br3 sudo ovs-vsctl get Interface c_br3_to_br3 ofport)
+gre_3_interface="r720_3_to_2.gre"
 
-#switch connection between br1 and br2
-br1_to_br2=$(ssh $ovs_br1 sudo ovs-vsctl get Interface br1_to_br2 ofport)
-br2_to_br1=$(ssh $ovs_br2 sudo ovs-vsctl get Interface br2_to_br1 ofport)
+br2_interface="br2.gre"
+br3_interface="br3.gre"
 
-#switch connection between br2 and br3
-br2_to_br3=$(ssh $ovs_br2 sudo ovs-vsctl get Interface br2_to_br3 ofport)
-br3_to_br2=$(ssh $ovs_br3 sudo ovs-vsctl get Interface br3_to_br2 ofport)
 
-#switch connection between c_br1 and c_br2
-c_br1_to_c_br2=$(ssh $ovs_c_br1 sudo ovs-vsctl get Interface c_br1_to_c_br2 ofport)
-c_br2_to_c_br1=$(ssh $ovs_c_br2 sudo ovs-vsctl get Interface c_br2_to_c_br1 ofport)
+gre_r720_2=$(ssh $1 sudo ovs-vsctl get Interface $gre_2_interface ofport)
 
-#switch connection between c_br2 and c_br3
-c_br2_to_c_br3=$(ssh $ovs_c_br2 sudo ovs-vsctl get Interface c_br2_to_c_br3 ofport)
-c_br3_to_c_br2=$(ssh $ovs_c_br3 sudo ovs-vsctl get Interface c_br3_to_c_br2 ofport)
+gre_r720_3=$(ssh $2 sudo ovs-vsctl get Interface $gre_3_interface ofport)
 
-#br1 and c_br1 dummy
-br1_dummy=$(ssh $ovs_br1 sudo ovs-vsctl get Interface dummy.tap ofport)
-br1_c_dummy=$(ssh $ovs_c_br1 sudo ovs-vsctl get Interface dummy.tap ofport)
+br2_gre_r720_2=$(ssh $1 sudo ovs-vsctl get Interface $br2_interface ofport)
+br2_gre_r720_3=$(ssh $2 sudo ovs-vsctl get Interface $br2_interface ofport)
+br3_gre_r720_2=$(ssh $1 sudo ovs-vsctl get Interface $br3_interface ofport)
+br3_gre_r720_3=$(ssh $2 sudo ovs-vsctl get Interface $br3_interface ofport)
 
-#br2 and c_br2 dummy
-br2_dummy=$(ssh $ovs_br2 sudo ovs-vsctl get Interface dummy.tap ofport)
-br2_c_dummy=$(ssh $ovs_c_br2 sudo ovs-vsctl get Interface dummy.tap ofport)
+br2_3_interface="br2_to_br3"
+br2_3_r2=$(ssh $1 sudo ovs-vsctl get Interface $br2_3_interface ofport)
+br2_3_r3=$(ssh $2 sudo ovs-vsctl get Interface $br2_3_interface ofport)
 
-#br3 and c_br3
-br3_dummy=$(ssh $ovs_br3 sudo ovs-vsctl get Interface dummy.tap ofport)
-br3_c_dummy=$(ssh $ovs_c_br3 sudo ovs-vsctl get Interface dummy.tap ofport)
+br3_2_interface="br3_to_br2"
+br3_2_r2=$(ssh $1 sudo ovs-vsctl get Interface $br3_2_interface ofport)
+br3_2_r3=$(ssh $2 sudo ovs-vsctl get Interface $br3_2_interface ofport)
 
-#get original dpids
-br1_dpid=$(ssh $ovs_br1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-br2_dpid=$(ssh $ovs_br2 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-br3_dpid=$(ssh $ovs_br3 sudo ovs-ofctl show br3 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+br1_2_interface="br1_to_br2"
+br1_2_r2=$(ssh $1 sudo ovs-vsctl get Interface $br1_2_interface ofport)
+br1_2_r3=$(ssh $2 sudo ovs-vsctl get Interface $br1_2_interface ofport)
 
-#get clone dpids
-clone_br1_dpid=$(ssh $ovs_c_br1 sudo ovs-ofctl show c_br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-clone_br2_dpid=$(ssh $ovs_c_br2 sudo ovs-ofctl show c_br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
-clone_br3_dpid=$(ssh $ovs_c_br3 sudo ovs-ofctl show c_br3 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+br2_1_interface="br2_to_br1"
+br2_1_r2=$(ssh $1 sudo ovs-vsctl get Interface $br2_1_interface ofport)
+br2_1_r3=$(ssh $2 sudo ovs-vsctl get Interface $br2_1_interface ofport)
+
+
+dummy1=$(ssh $1 sudo ovs-vsctl get Interface dummy.tap ofport)
+dummy2=$(ssh $2 sudo ovs-vsctl get Interface dummy.tap ofport)
+
+dummy1_2=$(ssh $1 sudo ovs-vsctl get Interface dummy2.tap ofport)
+dummy2_2=$(ssh $2 sudo ovs-vsctl get Interface dummy2.tap ofport)
+
+dummy1_3=$(ssh $1 sudo ovs-vsctl get Interface dummy3.tap ofport)
+dummy2_3=$(ssh $2 sudo ovs-vsctl get Interface dummy3.tap ofport)
+
+original_br1=$(ssh $1 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+original_br2=$(ssh $1 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+original_br3=$(ssh $1 sudo ovs-ofctl show br3 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br1=$(ssh $2 sudo ovs-ofctl show br1 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br2=$(ssh $2 sudo ovs-ofctl show br2 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
+clone_br3=$(ssh $2 sudo ovs-ofctl show br3 | grep -oP "dpid:.+" | sed 's/dpid://' | sed 's/\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)\(.\{2\}\)/\1:\2:\3:\4:\5:\6:\7:\8/')
 
 ################################################################
 #Print gathered information
@@ -117,24 +118,25 @@ echo "ubuntu-int2 clone OVS OF port: $ubuntu_int2_port_clone"
 echo "ubuntu-int3 clone OVS OF port: $ubuntu_int3_port_clone"
 echo "ubuntu-int4 clone OVS OF port: $ubuntu_int4_port_clone"
 echo "ubuntu-int5 clone OVS OF port: $ubuntu_int5_port_clone"
-echo "br1 gre tunnel to c_br1 OF port: $br1_to_c_br1"
-echo "br2 gre tunnel to c_br2 OF port: $br2_to_c_br2"
-echo "br3 gre tunnel to c_br3 OF port: $br3_to_c_br3"
-echo "c_br1 gre tunnel to br1 OF port: $c_br1_to_br1"
-echo "c_br2 gre tunnel to br2 OF port: $c_br2_to_br2"
-echo "c_br3 gre tunnel to br3 OF port: $c_br3_to_br3"
-echo "original br1 dpid: $br1_dpid"
-echo "original br2 dpid: $br2_dpid"
-echo "original br3 dpid: $br3_dpid"
-echo "clone br1 dpid: $clone_br1_dpid"
-echo "clone br2 dpid: $clone_br2_dpid"
-echo "clone br3 dpid: $clone_br3_dpid"
-echo "original br1 dummy port: $br1_dummy"
-echo "original br2 dummy port: $br2_dummy"
-echo "original br3 dummy port: $br3_dummy1_3"
-echo "clone br1 dummy port: $c_br1_dummy"
-echo "clone br2 dummy port: $c_br2_dummy"
-echo "clone br3 dummy port: $c_br3_dummy"
+echo "br1 gre tunnel of r720-2 to r720-3 OF port on r720-2: $gre_r720_2"
+echo "br2 gre tunnel of r720-2 to r720-3 OF port on r720-2: $br2_gre_r720_2"
+echo "br3 gre tunnel of r720-2 to r720-3 OF port on r720-2: $br2_gre_r720_3"
+echo "br1 gre tunnel of r720-3 to r720-2 OF port on r720-3: $gre_r720_3"
+echo "br2 gre tunnel of r720-3 to r720-2 OF port on r720-3: $br2_gre_r720_3"
+echo "br3 gre tunnel of r720-3 to r720-2 OF port on r720-3: $br3_gre_r720_3"
+echo "br1 to br2 patch cable on r720-2: $br1_2_r2"
+echo "original br1 dpid: $original_br1"
+echo "original br2 dpid: $original_br2"
+echo "original br3 dpid: $original_br3"
+echo "clone br1 dpid: $clone_br1"
+echo "clone br2 dpid: $clone_br2"
+echo "clone br3 dpid: $clone_br3"
+echo "original br1 dummy port: $dummy1"
+echo "original br2 dummy port: $dummy1_2"
+echo "original br3 dummy port: $dummy1_3"
+echo "clone br1 dummy port: $dummy2"
+echo "clone br2 dummy port: $dummy2_2"
+echo "clone br3 dummy port: $dummy2_3"
 
 python ovxctl.py -n createNetwork tcp:192.168.1.1:6633 192.168.3.1 24  #LIME address
 
@@ -197,9 +199,11 @@ python ovxctl.py -n createPort 1 $clone_br3_dpid $c_br3_to_c_br2
 #create port 3 on c_br3 - ubuntu-int4 clone
 python ovxctl.py -n createPort 1 $clone_br3_dpid $ubuntu_int4_port_clone
 #create port 4 on c_br3 - ubuntu-int5 clone
-python ovxctl.py -n createPort 1 $clone_br3_dpid $ubuntu_int5_port_clone
+python ovxctl.py -n createPort 1 $clone_br3 $ubuntu_int5_port_clone
 #create port 5 on c_br3 - dummy
-python ovxctl.py -n createPort 1 $clone_br3_dpid $c_br3_dummy
+python ovxctl.py -n createPort 1 $clone_br3 $dummy2_3
+#TEST: create another  port on a physical port
+#python ovxctl.py -n createPort 1 $clone_switch $gre_r720_3
 ################################################################
 #Original switches
 ################################################################
@@ -211,7 +215,8 @@ python ovxctl.py -n createPort 1 $br2_dpid $br2_to_c_br2
 python ovxctl.py -n createPort 1 $br3_dpid $br3_to_c_br3
 
 #create port 2 on br1 - the connection to br2
-python ovxctl.py -n createPort 1 $br1_dpid $br1_to_br2
+echo "br1_2 port:"
+python ovxctl.py -n createPort 1 $original_br1 $br1_2_r2
 #create port 3 on br1 - ubuntu-int1
 python ovxctl.py -n createPort 1 $br1_dpid $ubuntu_int1_port
 #create port 4 on br1 - ubuntu-int2
@@ -219,14 +224,16 @@ python ovxctl.py -n createPort 1 $br1_dpid $ubuntu_int2_port
 #create port 5 on br1 - ubuntu-int3
 python ovxctl.py -n createPort 1 $br1_dpid $ubuntu_int3_port
 #create port 6 on br1 - dummy
-python ovxctl.py -n createPort 1 $br1_dpid $br1_dummy
+python ovxctl.py -n createPort 1 $original_br1 $dummy1
 
 #create port 2 on br2 - the connection to br1
-python ovxctl.py -n createPort 1 $br2_dpid $br2_to_br1
+echo "br2_1 port:"
+python ovxctl.py -n createPort 1 $original_br2 $br2_1_r2
 #create port 3 on br2 - the connection to br3
-python ovxctl.py -n createPort 1 $br2_dpid $br2_to_br3
+echo "br2_3 port:"
+python ovxctl.py -n createPort 1 $original_br2 $br2_3_r2
 #create port 4 on br3 - dummy
-python ovxctl.py -n createPort 1 $br2_dpid $br2_dummy
+python ovxctl.py -n createPort 1 $original_br2 $dummy1_2
 
 #create port 2 on br3 - the connection to br2
 python ovxctl.py -n createPort 1 $br3_dpid $br3_to_br2
@@ -235,7 +242,7 @@ python ovxctl.py -n createPort 1 $br3_dpid $ubuntu_int4_port
 #create port 4 on br3 - ubuntu-int5
 python ovxctl.py -n createPort 1 $br3_dpid $ubuntu_int5_port
 #create port 5 on br3 - dummy
-python ovxctl.py -n createPort 1 $br3_dpid $br3_dummy
+python ovxctl.py -n createPort 1 $original_br3 $dummy1_3
 ################################################################
 #Ghost links
 ################################################################
@@ -243,6 +250,10 @@ python ovxctl.py -n createPort 1 $br3_dpid $br3_dummy
 python ovxctl.py -n connectLink 1 $br1 1 $c_br1 1 spf 1
 python ovxctl.py -n connectLink 1 $br2 1 $c_br2 1 spf 1
 python ovxctl.py -n connectLink 1 $br3 1 $c_br3 1 spf 1
+
+###############################################################
+#Switch links
+##############################################################
 
 python ovxctl.py -n connectLink 1 $br1 2 $br2 2 spf 1
 python ovxctl.py -n connectLink 1 $br2 3 $br3 2 spf 1
