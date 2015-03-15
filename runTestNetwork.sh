@@ -7,21 +7,25 @@ source createTestNetwork.sh 128.138.189.249 128.138.189.140
 echo ""
 sleep 10
 echo "Writing openflow rules"
-#skip port 1, as this is the ghost port
-for i in `seq 2 6`;
-do
-	actionString=""
-	for j in $(seq 2 6);
-	do
-		if [ "$i" -ne "$j" ];
-		then
-			currentActionString="output=$j,"
-			actionString="$actionString$currentActionString"
-		fi
-	done
-	source createArbitraryActionForwardRule.sh $i $actionString "00:a4:23:05:00:00:00:01"
-done
-#source createRules.sh
+#ip forward rules on br1 - 00:a4:23:05:00:00:00:01
+createIPMatchRule.sh "192.168.3.11" "3" "00:a4:23:05:00:00:00:01"
+createIPMatchRule.sh "192.168.3.12" "4" "00:a4:23:05:00:00:00:01"
+createIPMatchRule.sh "192.168.3.13" "5" "00:a4:23:05:00:00:00:01"
+createIPMatchRule.sh "192.168.3.14" "2" "00:a4:23:05:00:00:00:01"
+createIPMatchRule.sh "192.168.3.15" "2" "00:a4:23:05:00:00:00:01"
+#ip forward rules on br2 - 00:a4:23:05:00:00:00:02
+createIPMatchRule.sh "192.168.3.11" "2" "00:a4:23:05:00:00:00:02"
+createIPMatchRule.sh "192.168.3.12" "2" "00:a4:23:05:00:00:00:02"
+createIPMatchRule.sh "192.168.3.13" "2" "00:a4:23:05:00:00:00:02"
+createIPMatchRule.sh "192.168.3.14" "3" "00:a4:23:05:00:00:00:02"
+createIPMatchRule.sh "192.168.3.15" "3" "00:a4:23:05:00:00:00:02"
+#ip forward rules on br3 - 00:a4:23:05:00:00:00:03
+createIPMatchRule.sh "192.168.3.11" "2" "00:a4:23:05:00:00:00:03"
+createIPMatchRule.sh "192.168.3.12" "2" "00:a4:23:05:00:00:00:03"
+createIPMatchRule.sh "192.168.3.13" "2" "00:a4:23:05:00:00:00:03"
+createIPMatchRule.sh "192.168.3.14" "3" "00:a4:23:05:00:00:00:03"
+createIPMatchRule.sh "192.168.3.15" "4" "00:a4:23:05:00:00:00:03"
+
 echo -ne '.\r'
 sleep 2
 echo -ne '...\r'
