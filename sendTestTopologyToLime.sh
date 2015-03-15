@@ -14,7 +14,7 @@ int_4_mac="52:54:00:43:cb:e3"
 int_5_mac="52:54:00:59:80:71"
 
 original_1_string="{
-\"%original_ovx_switch\":
+\"$original_ovx_switch\":
 	{
 		\"ports\":
 			{
@@ -29,7 +29,7 @@ original_1_string="{
 }"
 
 original_2_string="{
-\"%original_ovx_switch\":
+\"$original_ovx_switch_2\":
 	{
 		\"ports\":
 			{
@@ -42,7 +42,7 @@ original_2_string="{
 }"
 
 original_3_string="{
-\"%original_ovx_switch\":
+\"$original_ovx_switch_3\":
 	{
 		\"ports\":
 			{
@@ -57,7 +57,7 @@ original_3_string="{
 
 
 clone_1_string="{
-\"%original_ovx_switch\":
+\"$clone_ovx_switch\":
 	{
 		\"ports\":
 			{
@@ -72,7 +72,7 @@ clone_1_string="{
 }"
 
 clone_2_string="{
-\"%original_ovx_switch\":
+\"$clone_ovx_switch_2\":
 	{
 		\"ports\":
 			{
@@ -85,7 +85,7 @@ clone_2_string="{
 }"
 
 clone_3_string="{
-\"%original_ovx_switch\":
+\"$clone_ovx_switch_3\":
 	{
 		\"ports\":
 			{
